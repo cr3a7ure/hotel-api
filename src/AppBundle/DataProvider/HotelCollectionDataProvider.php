@@ -158,6 +158,6 @@ final class HotelCollectionDataProvider implements CollectionDataProviderInterfa
         // // $emOrm = ObjectManager::getDoctrine();
         // $em->persist($airport);
         // $em->flush();
-        return [$hotels];
+        return $hotels;
     }
 }
