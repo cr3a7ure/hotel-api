@@ -1,0 +1,93 @@
+/home/cr3a7ure/Documents/thesis/test1/apiv2.0.3-4/api-resolver/vendor/api-platform/core/src/Annotation/ApiResource.php:
+   40       * @var string
+   41       */
+   42:     public $classtype;
+   43  
+   44      /**
+
+/home/cr3a7ure/Documents/thesis/test1/apiv2.0.3-4/api-resolver/vendor/api-platform/core/src/Metadata/Extractor/YamlExtractor.php:
+   64                  'description' => $this->phpize($resourceYaml, 'description', 'string'),
+   65                  'iri' => $this->phpize($resourceYaml, 'iri', 'string'),
+   66:                 'classtype' => $this->phpize($resourceYaml, 'classtype', 'string'),
+   67                  'itemOperations' => $resourceYaml['itemOperations'] ?? null,
+   68                  'collectionOperations' => $resourceYaml['collectionOperations'] ?? null,
+
+/home/cr3a7ure/Documents/thesis/test1/apiv2.0.3-4/api-resolver/vendor/api-platform/core/src/Metadata/Resource/Factory/AnnotationResourceMetadataFactory.php:
+   87                  $annotation->description,
+   88                  $annotation->iri,
+   89:                 $annotation->classtype,
+   90                  $annotation->itemOperations,
+   91                  $annotation->collectionOperations,
+   ..
+   95  
+   96          $resourceMetadata = $parentResourceMetadata;
+   97:         foreach (['shortName', 'description', 'iri', 'classtype', 'itemOperations', 'collectionOperations', 'attributes'] as $property) {
+   98              $resourceMetadata = $this->createWith($resourceMetadata, $property, $annotation->$property);
+   99          }
+
+/home/cr3a7ure/Documents/thesis/test1/apiv2.0.3-4/api-resolver/vendor/api-platform/core/src/Metadata/Resource/Factory/ExtractorResourceMetadataFactory.php:
+   83      private function update(ResourceMetadata $resourceMetadata, array $metadata): ResourceMetadata
+   84      {
+   85:         foreach (['shortName', 'description', 'iri', 'classtype', 'itemOperations', 'collectionOperations', 'attributes'] as $property) {
+   86              if (null === $metadata[$property] || null !== $resourceMetadata->{'get'.ucfirst($property)}()) {
+   87                  continue;
+
+/home/cr3a7ure/Documents/thesis/test1/apiv2.0.3-4/api-resolver/vendor/api-platform/core/src/Metadata/Resource/ResourceMetadata.php:
+   22      private $description;
+   23      private $iri;
+   24:     private $classtype;
+   25      private $itemOperations;
+   26      private $collectionOperations;
+   27      private $attributes;
+   28  
+   29:     public function __construct(string $shortName = null, string $description = null, string $iri = null, string $classtype = null, array $itemOperations = null, array $collectionOperations = null, array $attributes = null)
+   30      {
+   31          $this->shortName = $shortName;
+   32          $this->description = $description;
+   33          $this->iri = $iri;
+   34:         $this->classtype = $classtype;
+   35          $this->itemOperations = $itemOperations;
+   36          $this->collectionOperations = $collectionOperations;
+   ..
+  114  
+  115      /**
+  116:      * Gets the associated classtype.
+  117       *
+  118       * @return string|null
+  ...
+  120      public function getClasstype()
+  121      {
+  122:         return $this->classtype;
+  123      }
+  124  
+  125      /**
+  126:      * Returns a new instance with the given classtype.
+  127       *
+  128:      * @param string $classtype
+  129       *
+  130       * @return self
+  131       */
+  132:     public function withClasstype(string $classtype): self
+  133      {
+  134          $metadata = clone $this;
+  135:         $metadata->classtype = $classtype;
+  136  
+  137          return $metadata;
+
+/home/cr3a7ure/Documents/thesis/test1/apiv2.0.3-4/api-resolver/vendor/symfony/symfony/src/Symfony/Component/Config/Tests/Definition/Builder/NodeBuilderTest.php:
+   34          $builder = new BaseNodeBuilder();
+   35          $builder
+   36:             ->setNodeClass('noclasstype', '\\foo\\bar\\noclass')
+   37:             ->node('', 'noclasstype');
+   38      }
+   39  
+
+43 matches across 19 files
+
+Changes not staged for commit:
+  modified:   src/Annotation/ApiResource.php
+  modified:   src/Hydra/Serializer/DocumentationNormalizer.php
+  modified:   src/Metadata/Resource/Factory/AnnotationResourceMetadataFactory.php
+  modified:   src/Metadata/Resource/Factory/XmlResourceMetadataFactory.php
+  modified:   src/Metadata/Resource/Factory/YamlResourceMetadataFactory.php
+  modified:   src/Metadata/Resource/ResourceMetadata.php

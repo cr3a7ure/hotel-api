@@ -1,0 +1,118 @@
+<?php
+
+// src/AppBundle/Action/ApiRefAction.php
+
+namespace AppBundle\Action;
+
+use Symfony\Component\Serializer\Annotation\Groups;
+use AppBundle\Entity\ApiRef;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\Routing\Annotation\Route;
+use Unirest;
+use Easyrdf;
+use ML\JsonLD\JsonLD as JsonLD;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+
+use ApiPlatform\Core\EventListener\EventPriorities;
+use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
+
+class ApiRefAction
+{
+    // private $myService;
+
+    protected $requestStack;
+
+    public function __construct(RequestStack $requestStack)
+    {
+        $this->requestStack = $requestStack;
+    }
+
+    protected function getRequest()
+    {
+        return $this->requestStack->getCurrentRequest();
+    }
+
+    // public function __construct(MyService $myService)
+    // {
+    //     $this->myService = $myService;
+    // }
+// curl http://localhost:8090/test1/query -X POST --data 'query=prefix+hydra%3A+%3Chttp%3A%2F%2Fwww.w3.org%2Fns%2Fhydra%2Fcore%23%3E%0A%0Adescribe+%3Fsubject%0AFROM+%3Chttp%3A%2F%2Flocalhost%3A8090%2Ftest1%2Fdata%2Ftest1%3E%0AWHERE+%7B%0A++%3Fsubject+hydra%3AsupportedProperty+%3Fobject%0A%7D%0ALIMIT+25' -H 'Accept: application/ld+json'
+    /**
+     * @Route(
+     *     name="api_ref_action",
+     *     path="/api_ref/special",
+     *     defaults={"_api_resource_class"=ApiRef::class, "_api_collection_operation_name"="special"}
+     * )
+     * @Method("PUT")
+     */
+    // public function __invoke($data) // API Platform retrieves the PHP entity using the data provider then (for POST and
+    public function __invoke($data) // API Platform retrieves the PHP entity using the data provider then (for POST and
+                                    // PUT method) deserializes user data in it. Then passes it to the action. Here $data
+                                    // is an instance of Book having the given ID. By convention, the action's parameter
+                                    // must be called $data.
+    {
+        $request = $this->getRequest()->getContent();;
+        dump($request);
+        // EasyRdf\Namespace\EasyRdf_Namespace::set('category', 'http://dbpedia.org/resource/Category:');
+
+        // $sparql = new EasyRdf_Sparql_Client('http://dbpedia.org/sparql');
+        $encoders = array(new XmlEncoder(), new JsonEncoder());
+        $normalizers = array(new ObjectNormalizer());
+        $serializer = new Serializer($normalizers, $encoders);
+
+        $graph = new \EasyRdf_Graph();
+        $jsonldObj = $data->getArticleBody();
+        $jsonContent = $serializer->serialize($jsonldObj, 'json');
+        dump($jsonContent);
+        $test = stripslashes($jsonContent);
+
+        $test = $request;
+        dump($test);
+        $expanded = JsonLD::expand($test);
+        $graph->parse($expanded,'jsonld',null);
+        // dump($jsonld);
+        dump($graph);
+        $graphOut = $graph->serialise('json');
+        dump($graphOut);
+
+        $sparql = new \EasyRdf_Sparql_Client('http://localhost:8090/test1/query');
+        $query = 'prefix hydra: <http://www.w3.org/ns/hydra/core#>
+            DESCRIBE ?subject
+            FROM <http://localhost:8090/test1/data/test1>
+            WHERE {
+              ?subject hydra:supportedProperty ?object
+            }
+            LIMIT 10';
+        $q = $sparql->query($query);
+        dump($q);
+        $out = $sparql->countTriples();
+        // $out = $q->serialise('jsonld'); //
+        // $result = $sparql->query(
+        // 'SELECT * WHERE {'.
+        // '  ?country rdf:type dbo:Country .'.
+        // '  ?country rdfs:label ?label .'.
+        // '  ?country dc:subject category:Member_states_of_the_United_Nations .'.
+        // '  FILTER ( lang(?label) = "en" )'.
+        // '} ORDER BY ?label'
+        // );
+        // $this->myService->doSomething($data);
+        // $data = $request->getContent();
+
+        throw new \Exception('Something went wrong!');
+
+
+
+        $jsonContent = $serializer->serialize($data, 'json');
+        return new Response($graphOut); // API Platform will automatically validate, persist (if you use Doctrine) and serialize an entity
+                      // for you. If you prefer to do it yourself, return an instance of Symfony\Component\HttpFoundation\Response
+    }
+}

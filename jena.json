@@ -1,0 +1,139 @@
+PREFIX schema: <http://schema.org/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix hydra: <http://www.w3.org/ns/hydra/core#>
+#prefix : <>
+# SELECT EXACT CLASSSS
+   describe ?class
+#select distinct ?class ?entrypoint
+FROM <http://localhost:8090/test1/data/apiv7>
+WHERE  {
+#  ?class rdf:type schema:test. # Retrieve the correct class
+#  ?server hydra:supportedClass ?class. # find the server
+#  ?server hydra:entrypoint ?entrypoint . # retrieve the servers entrypoint
+  ?class hydra:supportedProperty ?props .  # class qualifies a list of props
+  ?props hydra:property  schema:longitude . # list of props we need
+  ?props2 hydra:property schema:latitude . # list of props we need
+
+} VALUES ?property {
+ schema:longitude
+ schema:latitude
+}
+
+{
+  "@graph" : [ {
+    "@id" : "_:b0",
+    "@type" : "hydra:SupportedProperty",
+    "description" : "Physical address of the item",
+    "property" : "schema:address",
+    "hydra:readable" : true,
+    "hydra:required" : false,
+    "title" : "address",
+    "hydra:writable" : true
+  }, {
+    "@id" : "_:b1",
+    "@type" : "hydra:SupportedProperty",
+    "description" : "The latitude of a location. For example ```37.42242``` ([WGS 84](https://en.wikipedia.org/wiki/World\\_Geodetic\\_System))",
+    "property" : "schema:latitude",
+    "hydra:readable" : true,
+    "hydra:required" : false,
+    "title" : "latitude",
+    "hydra:writable" : true
+  }, {
+    "@id" : "_:b2",
+    "@type" : "hydra:Operation",
+    "label" : "Deletes the GeoCoordinates resource.",
+    "method" : "DELETE",
+    "returns" : "owl:Nothing",
+    "title" : "Deletes the GeoCoordinates resource."
+  }, {
+    "@id" : "_:b3",
+    "@type" : "hydra:SupportedProperty",
+    "description" : "The longitude of a location. For example ```-122.08585``` ([WGS 84](https://en.wikipedia.org/wiki/World\\_Geodetic\\_System))",
+    "property" : "schema:longitude",
+    "hydra:readable" : true,
+    "hydra:required" : false,
+    "title" : "longitude",
+    "hydra:writable" : true
+  }, {
+    "@id" : "_:b4",
+    "@type" : "hydra:Operation",
+    "label" : "Retrieves GeoCoordinates resource.",
+    "method" : "GET",
+    "returns" : "schema:GeoCoordinates",
+    "title" : "Retrieves GeoCoordinates resource."
+  }, {
+    "@id" : "_:b5",
+    "@type" : "hydra:ReplaceResourceOperation",
+    "label" : "Replaces the GeoCoordinates resource.",
+    "expects" : "schema:GeoCoordinates",
+    "method" : "PUT",
+    "returns" : "schema:GeoCoordinates",
+    "title" : "Replaces the GeoCoordinates resource."
+  }, {
+    "@id" : "http://localhost:8091/geo_coordinates",
+    "@type" : "schema:test",
+    "jsonld_context" : "test",
+    "label" : "GeoCoordinates",
+    "supportedOperation" : [ "_:b2", "_:b4", "_:b5" ],
+    "supportedProperty" : [ "_:b1", "_:b3", "_:b0" ],
+    "title" : "GeoCoordinates"
+  } ],
+  "@context" : {
+    "description" : {
+      "@id" : "http://www.w3.org/ns/hydra/core#description"
+    },
+    "writable" : {
+      "@id" : "http://www.w3.org/ns/hydra/core#writable",
+      "@type" : "http://www.w3.org/2001/XMLSchema#boolean"
+    },
+    "required" : {
+      "@id" : "http://www.w3.org/ns/hydra/core#required",
+      "@type" : "http://www.w3.org/2001/XMLSchema#boolean"
+    },
+    "readable" : {
+      "@id" : "http://www.w3.org/ns/hydra/core#readable",
+      "@type" : "http://www.w3.org/2001/XMLSchema#boolean"
+    },
+    "property" : {
+      "@id" : "http://www.w3.org/ns/hydra/core#property",
+      "@type" : "@id"
+    },
+    "title" : {
+      "@id" : "http://www.w3.org/ns/hydra/core#title"
+    },
+    "label" : {
+      "@id" : "http://www.w3.org/2000/01/rdf-schema#label"
+    },
+    "supportedProperty" : {
+      "@id" : "http://www.w3.org/ns/hydra/core#supportedProperty",
+      "@type" : "@id"
+    },
+    "supportedOperation" : {
+      "@id" : "http://www.w3.org/ns/hydra/core#supportedOperation",
+      "@type" : "@id"
+    },
+    "jsonld_context" : {
+      "@id" : "http://localhost:8091/docs.jsonld#jsonld_context"
+    },
+    "returns" : {
+      "@id" : "http://www.w3.org/ns/hydra/core#returns",
+      "@type" : "@id"
+    },
+    "method" : {
+      "@id" : "http://www.w3.org/ns/hydra/core#method"
+    },
+    "expects" : {
+      "@id" : "http://www.w3.org/ns/hydra/core#expects",
+      "@type" : "@id"
+    },
+    "hydra" : "http://www.w3.org/ns/hydra/core#",
+    "schema" : "http://schema.org/",
+    "xmls" : "http://www.w3.org/2001/XMLSchema#",
+    "owl" : "http://www.w3.org/2002/07/owl#",
+    "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#"
+  }
+}
+
+

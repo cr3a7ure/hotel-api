@@ -1,0 +1,83 @@
+# app/config/schema.yml
+# Geo-API
+annotationGenerators:
+    - ApiPlatform\SchemaGenerator\AnnotationGenerator\PhpDocAnnotationGenerator
+    - ApiPlatform\SchemaGenerator\AnnotationGenerator\DoctrineOrmAnnotationGenerator
+    - ApiPlatform\SchemaGenerator\AnnotationGenerator\ConstraintAnnotationGenerator
+    - ApiPlatform\SchemaGenerator\AnnotationGenerator\ApiPlatformCoreAnnotationGenerator
+
+debug: true
+
+types: # The list of type to generated (a PHP entity class by type will be generated)
+
+  Hotel:
+    parent: false
+    properties:
+      name: ~
+      description: ~
+      address: {range: PostalAddress}
+      starRating: {range: Rating}
+      faxNumber: ~
+      telephone: ~
+      makesOffer: {range: Offer}
+      priceRange: {range: PriceSpecification}
+      award: ~
+      geo:
+        range: GeoCoordinates
+  PriceSpecification:
+    parent: false
+    properties:
+      maxPrice: ~
+      minPrice: ~
+      priceCurrency: ~
+  PostalAddress:
+    parent: false
+    properties:
+      addressCountry:
+        range: Text
+      addressLocality: ~
+      addressRegion: ~
+      postalCode: ~
+      streetAddress: ~
+  GeoCoordinates:
+    parent: false
+    properties:
+      latitude: ~
+      longitude: ~
+  Rating:
+    parent: false
+    properties:
+      author: {range: Text}
+      bestRating: {range: Number}
+      ratingValue: {range: Number}
+      worstRating: {range: Number}
+  Offer:
+    parent: false
+    properties:
+      priceCurrency:
+      price: {
+        range: Number }
+      seller: {
+        range: Text }
+    # Thing:
+    #   properties:
+    #     name: ~
+
+# airbnb key: d306zoyjsyarp7ifhu67rjxn52tv0t20
+
+  # BlogPosting: ~ # A type to generate a PHP entity class from, including all its properties (here this type has no specific property, they are all inherited)
+  # Article: # Schema.org has an inheritance system, we will configure all types of the hierarchy
+  #   properties: # The list of properties we want to use
+  #     articleBody: ~
+  #     articleSection: ~
+  # CreativeWork:
+  #   properties:
+  #     author:
+  #       range: Person # PHP Schema handle relations. Here we force the type of the property to Person
+  #       cardinality: (*..0) # Force the cardinality of the relation
+  #     headline: ~
+  #     isFamilyFriendly: ~
+  #     datePublished: ~
+
+  # Person: # Person is a relation of the "CreativeWork" type (property "author"), PHP Schema will generate relations for us
+  #   properties: {} # We don't want any specific property for a person except "name" inherited from Thing
