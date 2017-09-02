@@ -18,6 +18,8 @@ use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
+use \DateTime;
+use \DateInterval;
 use Unirest;
 
 final class HotelCollectionDataProvider implements CollectionDataProviderInterface
@@ -74,16 +76,22 @@ final class HotelCollectionDataProvider implements CollectionDataProviderInterfa
         // // dump($props[$propKeys[1]]);
         // $variable = 'Chios';
         // $url = 'https://api.sandbox.amadeus.com/v1.2/hotels/search-airport';
+        $now = new  DateTime();
+        $interval = new DateInterval('P4D');
+        $now = $now->add($interval);
         $url = 'https://api.sandbox.amadeus.com/v1.2/hotels/search-circle';
         $headers = array('Accept' => 'application/json');
         $query = array();
         $query['apikey'] = 'ZRjgUbT6jlJZlEvY86DrhyOrXAGzvANA';
         // $query['location'] = 'BOS';
-        $query['latitude'] = $searchQuery['latitude'];
-        $query['longitude'] =  $searchQuery['longitude'];
+        $query['latitude'] = array_key_exists('latitude',$searchQuery) ? $searchQuery['latitude'] : 36.0857;
+        $query['longitude'] =  array_key_exists('longitude',$searchQuery) ? $searchQuery['longitude'] : -115.1541 ;
         $query['radius'] = '50';
-        $query['check_in'] = '2017-08-14';
-        $query['check_out'] = '2017-08-15';
+        $query['check_in'] = $now->format('Y-m-d');
+        $interval = new DateInterval('P1W');
+        $next_week = $now->add($interval);
+        $query['check_out'] = $next_week->format('Y-m-d');
+        // dump($query);
         $response = Unirest\Request::get($url,$headers,$query);
         // dump($response);
         $hotels = array();
