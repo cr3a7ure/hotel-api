@@ -94,6 +94,13 @@ class NegotiatorTest extends TestCase
             array('image/jpeg, application/x-ms-application, image/gif, application/xaml+xml, image/pjpeg, application/x-ms-xbap, */*', array( 'text/html', 'application/xhtml+xml'), array('text/html', array())),
             # Quality of source factors
             array($rfcHeader, array('text/html;q=0.4', 'text/plain'), array('text/plain', array())),
+            # Wildcard "plus" parts (e.g., application/vnd.api+json)
+            array('application/vnd.api+json', array('application/json', 'application/*+json'), array('application/*+json', array())),
+            array('application/json;q=0.7, application/*+json;q=0.7', array('application/hal+json', 'application/problem+json'), array('application/hal+json', array())),
+            array('application/json;q=0.7, application/problem+*;q=0.7', array('application/hal+xml', 'application/problem+xml'), array('application/problem+xml', array())),
+            array($pearAcceptHeader, array('application/*+xml'), array('application/*+xml', array())),
+            # @see https://github.com/willdurand/Negotiation/issues/93
+            array('application/hal+json', array('application/ld+json', 'application/hal+json', 'application/xml', 'text/xml', 'application/json', 'text/html'), array('application/hal+json', array())),
         );
     }
 

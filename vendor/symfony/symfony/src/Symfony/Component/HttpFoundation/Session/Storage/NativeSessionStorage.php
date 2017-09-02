@@ -80,6 +80,7 @@ class NativeSessionStorage implements SessionStorageInterface
      * name, "PHPSESSID"
      * referer_check, ""
      * serialize_handler, "php"
+     * use_strict_mode, "0"
      * use_cookies, "1"
      * use_only_cookies, "1"
      * use_trans_sid, "0"
@@ -90,6 +91,10 @@ class NativeSessionStorage implements SessionStorageInterface
      * upload_progress.freq, "1%"
      * upload_progress.min-freq, "1"
      * url_rewriter.tags, "a=href,area=href,frame=src,form=,fieldset="
+     * sid_length, "32"
+     * sid_bits_per_character, "5"
+     * trans_sid_hosts, $_SERVER['HTTP_HOST']
+     * trans_sid_tags, "a=href,area=href,frame=src,form="
      *
      * @param array                                                            $options Session configuration options
      * @param AbstractProxy|NativeSessionHandler|\SessionHandlerInterface|null $handler
@@ -311,10 +316,11 @@ class NativeSessionStorage implements SessionStorageInterface
             'entropy_file', 'entropy_length', 'gc_divisor',
             'gc_maxlifetime', 'gc_probability', 'hash_bits_per_character',
             'hash_function', 'name', 'referer_check',
-            'serialize_handler', 'use_cookies',
+            'serialize_handler', 'use_strict_mode', 'use_cookies',
             'use_only_cookies', 'use_trans_sid', 'upload_progress.enabled',
             'upload_progress.cleanup', 'upload_progress.prefix', 'upload_progress.name',
             'upload_progress.freq', 'upload_progress.min-freq', 'url_rewriter.tags',
+            'sid_length', 'sid_bits_per_character', 'trans_sid_hosts', 'trans_sid_tags',
         ));
 
         foreach ($options as $key => $value) {

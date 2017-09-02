@@ -68,11 +68,20 @@ class JsonContext extends BaseContext
      *
      * @Then the JSON nodes should be equal to:
      */
-    public function theJsonNodesShoudBeEqualTo(TableNode $nodes)
+    public function theJsonNodesShouldBeEqualTo(TableNode $nodes)
     {
         foreach ($nodes->getRowsHash() as $node => $text) {
             $this->theJsonNodeShouldBeEqualTo($node, $text);
         }
+    }
+
+    public function theJsonNodesShoudBeEqualTo(TableNode $nodes)
+    {
+        trigger_error(
+            sprintf('The %s function is deprecated since version 2.7 and will be removed in 3.0. Use the %s::theJsonNodesShouldBeEqualTo function instead.', __METHOD__, __CLASS__),
+            E_USER_DEPRECATED
+        );
+        return $this->theJsonNodesShouldBeEqualTo($nodes);
     }
 
     /**
@@ -210,11 +219,20 @@ class JsonContext extends BaseContext
      *
      * @Then the JSON nodes should contain:
      */
-    public function theJsonNodesShoudContain(TableNode $nodes)
+    public function theJsonNodesShouldContain(TableNode $nodes)
     {
         foreach ($nodes->getRowsHash() as $node => $text) {
             $this->theJsonNodeShouldContain($node, $text);
         }
+    }
+
+    public function theJsonNodesShoudContain(TableNode $nodes)
+    {
+        trigger_error(
+            sprintf('The %s function is deprecated since version 2.7 and will be removed in 3.0. Use the %s::theJsonNodesShouldContain function instead.', __METHOD__, __CLASS__),
+            E_USER_DEPRECATED
+        );
+        return $this->theJsonNodesShouldBeEqualTo($nodes);
     }
 
     /**
@@ -236,11 +254,20 @@ class JsonContext extends BaseContext
      *
      * @Then the JSON nodes should not contain:
      */
-    public function theJsonNodesShoudNotContain(TableNode $nodes)
+    public function theJsonNodesShouldNotContain(TableNode $nodes)
     {
         foreach ($nodes->getRowsHash() as $node => $text) {
             $this->theJsonNodeShouldNotContain($node, $text);
         }
+    }
+
+    public function theJsonNodesShoudNotContain(TableNode $nodes)
+    {
+        trigger_error(
+            sprintf('The %s function is deprecated since version 2.7 and will be removed in 3.0. Use the %s::theJsonNodesShouldNotContain function instead.', __METHOD__, __CLASS__),
+            E_USER_DEPRECATED
+        );
+        return $this->theJsonNodesShouldBeEqualTo($nodes);
     }
 
     /**

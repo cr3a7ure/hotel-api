@@ -113,6 +113,21 @@ class RestContext extends BaseContext
     }
 
     /**
+    * Checks, whether the header name is not equal to given text
+    *
+    * @Then the header :name should not be equal to :value
+    */
+    public function theHeaderShouldNotBeEqualTo($name, $value) {
+        $actual = $this->getSession()->getResponseHeader($name);
+        if (strtolower($value) == strtolower($actual)) {
+            throw new ExpectationException(
+                "The header '$name' is equal to '$actual'",
+                $this->getSession()->getDriver()
+            );
+        }
+    }
+
+    /**
      * Checks, whether the header name contains the given text
      *
      * @Then the header :name should contain :value
@@ -160,8 +175,8 @@ class RestContext extends BaseContext
      */
     public function theResponseShouldExpireInTheFuture()
     {
-        $date = new \DateTime($this->request->getHttpHeader('Date'));
-        $expires = new \DateTime($this->request->getHttpHeader('Expires'));
+        $date = new \DateTime($this->request->getHttpRawHeader('Date')[0]);
+        $expires = new \DateTime($this->request->getHttpRawHeader('Expires')[0]);
 
         $this->assertSame(1, $expires->diff($date)->invert,
             sprintf('The response doesn\'t expire in the future (%s)', $expires->format(DATE_ATOM))

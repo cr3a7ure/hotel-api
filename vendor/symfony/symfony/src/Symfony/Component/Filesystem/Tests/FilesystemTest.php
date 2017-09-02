@@ -156,6 +156,9 @@ class FilesystemTest extends FilesystemTestCase
         $this->assertEquals('SOURCE FILE', file_get_contents($targetFilePath));
     }
 
+    /**
+     * @group network
+     */
     public function testCopyForOriginUrlsAndExistingLocalFileDefaultsToCopy()
     {
         $sourceFilePath = 'http://symfony.com/images/common/logo/logo_symfony_header.png';
@@ -593,7 +596,10 @@ class FilesystemTest extends FilesystemTestCase
 
         $this->filesystem->hardlink($file, $link);
 
-        $this->filesystem->chown($link, $this->getFileOwner($link));
+        $owner = $this->getFileOwner($link);
+        $this->filesystem->chown($link, $owner);
+
+        $this->assertSame($owner, $this->getFileOwner($link));
     }
 
     /**
@@ -699,7 +705,10 @@ class FilesystemTest extends FilesystemTestCase
 
         $this->filesystem->hardlink($file, $link);
 
-        $this->filesystem->chgrp($link, $this->getFileGroup($link));
+        $group = $this->getFileGroup($link);
+        $this->filesystem->chgrp($link, $group);
+
+        $this->assertSame($group, $this->getFileGroup($link));
     }
 
     /**

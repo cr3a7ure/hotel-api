@@ -164,7 +164,7 @@ class Inline
                 }
 
                 if (Yaml::DUMP_OBJECT_AS_MAP & $flags && ($value instanceof \stdClass || $value instanceof \ArrayObject)) {
-                    return self::dumpArray((array) $value, $flags);
+                    return self::dumpArray($value, $flags);
                 }
 
                 if (Yaml::DUMP_EXCEPTION_ON_INVALID_TYPE & $flags) {
@@ -224,12 +224,16 @@ class Inline
      *
      * @internal
      *
-     * @param array $value The PHP array to check
+     * @param array|\ArrayObject|\stdClass $value The PHP array or array-like object to check
      *
      * @return bool true if value is hash array, false otherwise
      */
-    public static function isHash(array $value)
+    public static function isHash($value)
     {
+        if ($value instanceof \stdClass || $value instanceof \ArrayObject) {
+            return true;
+        }
+
         $expectedKey = 0;
 
         foreach ($value as $key => $val) {
@@ -273,13 +277,13 @@ class Inline
     /**
      * Parses a YAML scalar.
      *
-     * @param string $scalar
-     * @param int    $flags
-     * @param string $delimiters
-     * @param array  $stringDelimiters
-     * @param int    &$i
-     * @param bool   $evaluate
-     * @param array  $references
+     * @param string   $scalar
+     * @param int      $flags
+     * @param string[] $delimiters
+     * @param string[] $stringDelimiters
+     * @param int      &$i
+     * @param bool     $evaluate
+     * @param array    $references
      *
      * @return string
      *
@@ -457,14 +461,15 @@ class Inline
             }
 
             // key
+            $isKeyQuoted = in_array($mapping[$i], array('"', "'"), true);
             $key = self::parseScalar($mapping, $flags, array(':', ' '), array('"', "'"), $i, false);
 
             if (':' !== $key && false === $i = strpos($mapping, ':', $i)) {
                 break;
             }
 
-            if (':' !== $key && (!isset($mapping[$i + 1]) || !in_array($mapping[$i + 1], array(' ', ',', '[', ']', '{', '}'), true))) {
-                @trigger_error('Using a colon that is not followed by an indication character (i.e. " ", ",", "[", "]", "{", "}" is deprecated since version 3.2 and will throw a ParseException in 4.0.', E_USER_DEPRECATED);
+            if (':' !== $key && !$isKeyQuoted && (!isset($mapping[$i + 1]) || !in_array($mapping[$i + 1], array(' ', ',', '[', ']', '{', '}'), true))) {
+                @trigger_error('Using a colon after an unquoted mapping key that is not followed by an indication character (i.e. " ", ",", "[", "]", "{", "}") is deprecated since version 3.2 and will throw a ParseException in 4.0.', E_USER_DEPRECATED);
             }
 
             // value
@@ -533,7 +538,7 @@ class Inline
      * @param int    $flags
      * @param array  $references
      *
-     * @return string A YAML string
+     * @return mixed The evaluated YAML string
      *
      * @throws ParseException when object parsing support was disabled and the parser detected a PHP object or when a reference could not be resolved
      */

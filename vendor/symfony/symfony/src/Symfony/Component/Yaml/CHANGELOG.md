@@ -5,8 +5,8 @@ CHANGELOG
 -----
 
  * Mappings with a colon (`:`) that is not followed by a whitespace are deprecated
-   and will lead to a `ParseException` in Symfony 4.0 (e.g. `foo:bar` must be
-   `foo: bar`).
+   when the mapping key is not quoted and will lead to a `ParseException` in
+   Symfony 4.0 (e.g. `foo:bar` must be `foo: bar`).
 
  * Added support for parsing PHP constants:
 
@@ -19,6 +19,9 @@ CHANGELOG
 
 3.1.0
 -----
+
+ * Added support to dump `stdClass` and `ArrayAccess` objects as YAML mappings
+   through the `Yaml::DUMP_OBJECT_AS_MAP` flag.
 
  * Strings that are not UTF-8 encoded will be dumped as base64 encoded binary
    data.
