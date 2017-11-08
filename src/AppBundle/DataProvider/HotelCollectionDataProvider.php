@@ -26,13 +26,13 @@ final class HotelCollectionDataProvider implements CollectionDataProviderInterfa
 {
   protected $requestStack;
   protected $managerRegistry;
-  // protected $objectManager;
+  protected $amadeusKey;
 
-  public function __construct(RequestStack $requestStack,ManagerRegistry $managerRegistry)
+  public function __construct(RequestStack $requestStack,ManagerRegistry $managerRegistry,$amadeusKey)
     {
         $this->requestStack = $requestStack;
         $this->managerRegistry = $managerRegistry;
-        // $this->objectManager = $objectManager;
+        $this->amadeusKey = $amadeusKey;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null)
@@ -45,9 +45,6 @@ final class HotelCollectionDataProvider implements CollectionDataProviderInterfa
         $request = $this->requestStack->getCurrentRequest();
         $searchParametersObj = $request->query->all();
         $searchParametersKeys = array_keys($searchParametersObj);
-        // dump($request);
-        dump($searchParametersObj);
-        // dump($searchParametersKeys);
         $searchQuery = [];
         $variable = '';
         foreach ($searchParametersObj as $key => $value) {
@@ -67,14 +64,6 @@ final class HotelCollectionDataProvider implements CollectionDataProviderInterfa
                 // dump($searchQuery[$propertyKey]);
             }
         }
-        // Keyword in Airport Name, City or Code.
-        // $request = $this->requestStack->getCurrentRequest();
-        // // $test = $request->query;//->get('');
-        // $props = $request->query->all();
-        // $propKeys = array_keys($props);
-        // // dump($propKeys[1]);
-        // // dump($props[$propKeys[1]]);
-        // $variable = 'Chios';
         // $url = 'https://api.sandbox.amadeus.com/v1.2/hotels/search-airport';
         $now = new  DateTime();
         $interval = new DateInterval('P4D');
@@ -82,7 +71,7 @@ final class HotelCollectionDataProvider implements CollectionDataProviderInterfa
         $url = 'https://api.sandbox.amadeus.com/v1.2/hotels/search-circle';
         $headers = array('Accept' => 'application/json');
         $query = array();
-        $query['apikey'] = 'ZRjgUbT6jlJZlEvY86DrhyOrXAGzvANA';
+        $query['apikey'] = $this->amadeusKey;
         // $query['location'] = 'BOS';
         $query['latitude'] = array_key_exists('latitude',$searchQuery) ? $searchQuery['latitude'] : 36.0857;
         $query['longitude'] =  array_key_exists('longitude',$searchQuery) ? $searchQuery['longitude'] : -115.1541 ;
@@ -91,9 +80,7 @@ final class HotelCollectionDataProvider implements CollectionDataProviderInterfa
         $interval = new DateInterval('P1W');
         $next_week = $now->add($interval);
         $query['check_out'] = $next_week->format('Y-m-d');
-        // dump($query);
         $response = Unirest\Request::get($url,$headers,$query);
-        // dump($response);
         $hotels = array();
         $geolocs = array();
         $addresses = array();
@@ -154,10 +141,6 @@ final class HotelCollectionDataProvider implements CollectionDataProviderInterfa
             $hotels[$key]->setGeo($geolocs[$key]);
             // $hotels[$key]->setGeo(null);
         }
-        // $em = $this->managerRegistry->getManagerForClass('AppBundle\Entity\Airport');
-        // // $emOrm = ObjectManager::getDoctrine();
-        // $em->persist($airport);
-        // $em->flush();
         return $hotels;
     }
 }
